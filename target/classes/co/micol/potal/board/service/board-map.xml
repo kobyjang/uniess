@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="co.micol.potal.board.service.BoardMapper">
+
+   <select id="boardSelectList" resultType="co.micol.potal.board.service.BoardVO">
+	 	SELECT    CM.COT_ID
+	      ,   CM.CONTENT_ID
+	      ,   CM.TITLE
+	      ,   DM.FIRST_IMAGE AS IMG_ID
+	      ,   DATE_FORMAT(FI.EVENT_START_DATE, '%Y-%m-%d') AS EVENT_START_DATE 
+	      ,   DATE_FORMAT(FI.EVENT_END_DATE, '%Y-%m-%d') AS EVENT_END_DATE 
+		  ,   CM.READ_COUNT
+ 		FROM CONTENT_MASTER CM 
+		INNER JOIN DATABASE_MASTER DM
+		ON    CM.COT_ID = DM.COT_ID
+		INNER JOIN FESTIVAL_INTRO FI
+		ON    DM.COT_ID = FI.COT_ID
+		ORDER BY CONTENT_ID  ASC 
+		LIMIT 10
+		; 
+ 	</select>
+ 
+
+   
+   
+   <select id="boardSelect" resultType="co.micol.potal.board.service.BoardVO">   
+   <!--   원하는 글 1개만 가져온다. -->
+	 	SELECT    CM.*
+	      ,   	DM.FIRST_IMAGE AS IMG_ID
+	      ,		DM.HOMEPAGE  AS HOMEPAGE
+	      ,   	DATE_FORMAT(FI.EVENT_START_DATE, '%Y-%m-%d') AS EVENT_START_DATE 
+	      ,  	DATE_FORMAT(FI.EVENT_END_DATE, '%Y-%m-%d') AS EVENT_END_DATE 
+		  ,   	CM.READ_COUNT
+		  ,		DM.OVER_VIEW AS OVIEW
+		  ,		DM.ADDR1 AS ADDR
+ 		FROM CONTENT_MASTER CM  
+      	INNER JOIN DATABASE_MASTER DM
+		ON    CM.COT_ID = DM.COT_ID
+		INNER JOIN FESTIVAL_INTRO FI
+		ON    DM.COT_ID = FI.COT_ID
+		WHERE CONTENT_ID = ${content_id}  
+		ORDER BY CONTENT_ID  ASC ;
+   </select>
+   
+   	<select id="boardTagList" resultType="co.micol.potal.board.service.BoardVO">
+		SELECT
+			t.TAG_NAME 
+		FROM CONTENT_MASTER CM
+		INNER JOIN CONTENT_TAGS ct
+			ON ct.COT_ID = CM.COT_ID 
+		INNER JOIN TAGS t
+			ON t.TAG_ID = ct.TAG_ID 
+		WHERE CONTENT_ID = #{content_id};
+	</select>
+   
+   <!--  
+   <insert id="boardInsert" parameterType="co.micol.potal.board.service.BoardVO">
+      <!- no값은 selectKey로 가져옴. ->
+      <selectKey keyProperty="no" resultType="int" order="BEFORE">
+         SELECT MAX(NO) + 1 AS NO FROM BOARD
+      </selectKey>   
+      INSERT INTO BOARD(NO, WRITER, WDATE, TITLE, SUBJECT)
+      VALUES(#{no}, #{writer}, #{wdate}, #{title}, #{subject})
+   </insert>
+   
+   <update id="boardUpdate" parameterType="co.micol.potal.board.service.BoardVO">
+      UPDATE BOARD         <!-  게시글의 내용(subject)만 변경할 수 있도록 설정. ->
+      SET SUBJECT = #{subject}
+      WHERE NO = #{no}
+   </update>
+   
+   <delete id="boardDelete" parameterType="co.micol.potal.board.service.BoardVO">
+      DELETE FROM BOARD WHERE NO = #{no} 
+   </delete>
+   
+   <select id="boardSearchList" resultType="co.micol.potal.board.service.BoardVO">
+      SELECT B.*, M.NAME 
+      FROM BOARD B, MEMBER M
+      WHERE B.WRITER = M.ID 
+      <if test="key eq null"> AND 1 = 1</if>
+      <if test="key.equals('title')"> AND TITLE LIKE '%' || #{val} || '%'</if>
+      <if test="key.equals('subject')"> AND SUBJECT LIKE '%' || #{val} || '%'</if>
+      <if test="key.equals('wdate')"> AND TO_CHAR(WDATE,'YYYY-MM-DD') = #{val}</if>
+   </select>
+   
+   <update id="boardNoupdate"  parameterType="int">
+   UPDATE BOARD SET NO = NO -1
+   <![CDATA[
+   	WHERE NO > #{no}
+   ]]>
+   </update>
+   
+	<update id="boardHit" parameterType="int">
+		UPDATE BOARD SET read_count = read_count +1 WHERE cot_id = #{n}
+	</update>-->
+</mapper>
