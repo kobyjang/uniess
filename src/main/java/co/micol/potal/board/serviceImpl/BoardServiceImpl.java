@@ -16,7 +16,7 @@ public class BoardServiceImpl implements BoardService {
    BoardMapper map;
 
    @Override
-   public List<BoardVO> boardSelectList() {
+   public List<BoardVO> boardSelectList() { 
       
       return map.boardSelectList();
    }
@@ -61,9 +61,16 @@ public class BoardServiceImpl implements BoardService {
 		map.boardNoupdate(n);
 	
 	}
+	//페이지처리한 글 목록
 	@Override
-	public List<BoardVO> boardTagList(String id) {
-		return map.boardTagList(id);
+	public List<BoardVO> listCri(Criteria cri) throws Exception {
+		return bdao.listPageCri(cri);
+	}
+
+	//DB 테이블에 있는 모든 글 개수 계산 후 리턴
+	@Override
+	public int pageCount() throws Exception {
+		return bdao.pageCount();
 	}
 
 

@@ -15,7 +15,7 @@ public interface BoardMapper {
 	int boardDelete(BoardVO vo);
 	void boardHit(int n);
 	
-	List<BoardVO> boardTagList(String id); 
+
 	List<BoardVO> boardSearchList(@Param("key") String key, @Param("val") String val); 		
 	void boardNoupdate(int n); 
 }

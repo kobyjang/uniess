@@ -21,4 +21,6 @@ public class BoardVO {
 	private String oview;
 	private String addr;
 	private String homepage;
+	private String tags;
+	
 }

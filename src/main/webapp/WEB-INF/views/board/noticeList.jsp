@@ -87,23 +87,13 @@
 								<td align="center">${board.read_count }</td>
 								
 							</tr>
-											<th>태그</th>
-						<td colspan=3>
-							<ul class="tagList">
-							<c:if test="${tagList != '[null]'}">
-								<c:forEach var="item" items="${tagList}">
-									<li>${item}</li>
-								</c:forEach>
-							</c:if>
-							<c:if test="${tagList == '[null]'}">
-								<p>-</p>
-							</c:if>
-							</ul>
-						</td>
-							
+									<th>태그</th>
+					<td align="center" colspan="3">${board.tags}</td>
 						</c:forEach>
-					
+								
+							
 					</tbody>
+				
 				</table>
 			<div>
 				<form id="readForm" method="post">
@@ -159,6 +149,25 @@
 		function BoardSearch() {
 			var key = $("#key").val();
 			var val = $("#val").val();
+			$.ajax({
+				url: "ajaxBoardSearch.do",
+				type: "post",
+				data: { "key": key, "val": val },
+				dataType: "json",
+				success: function (data) {
+					if (data.length > 0) {
+						resultHtml(data);
+					} else {
+						alert("해당되는 데이터가 존재하지 않는다.");
+					}
+				},
+				error: function () {
+					alert("데이터 검색이 실패했다..");
+				}
+			});
+		}
+		function BoardSearch() {
+			var id = $("#id").val();
 			$.ajax({
 				url: "ajaxBoardSearch.do",
 				type: "post",

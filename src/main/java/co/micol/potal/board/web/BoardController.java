@@ -26,18 +26,20 @@ public class BoardController {
 	
 	//�씠�븯 Mapper 硫붿냼�뱶瑜� 留뚮뱾�뼱 以��떎
 	@RequestMapping("/noticeList.do")
-	public String noticeList(
-			String id,  Model model) {
+	public String noticeList( 
+		 Model model) {
 		
 		System.out.println(boardDao.boardSelectList());
-		System.out.println(boardDao.boardTagList(id));
+		
+		
 
 		model.addAttribute("boards", boardDao.boardSelectList());
-		model.addAttribute("tagList",boardDao.boardTagList(id));
+	
+		
 		return "board/noticeList";
 	}
 
-	
+
 	 
 	
 	@PostMapping("/boardRead.do")
@@ -47,6 +49,27 @@ public class BoardController {
 			model.addAttribute("board", vo);  //湲� �떞怨�
 			
 		return "board/boardRead";
+	}
+	//페이징처리한 글목록
+	@RequestMapping(value = "/listCri", method = RequestMethod.GET)
+	public void listCriGET(Criteria cri, Model model) throws Exception{
+		l.info("C: listCri 겟 호출" + cri);
+		model.addAttribute("boardList", service.listCri(cri));
+	}
+
+	//글목록보기(PageMaker객체 사용)
+	// http://localhost:8088/board/listPage
+	@RequestMapping(value = "/listPage", method = RequestMethod.GET)
+	public void listPageGET(Criteria cri, Model model) throws Exception{
+		l.info("C: cri는 "+cri);
+		model.addAttribute("boardList", service.listCri(cri));
+
+		PageMaker pm = new PageMaker();
+		pm.setCri(cri);
+		pm.setTotalCount(service.pageCount()); //DB의 전체ROW수 입력
+
+		// 뷰페이지로 전달 
+		model.addAttribute("pm", pm);
 	}
 }
 //	

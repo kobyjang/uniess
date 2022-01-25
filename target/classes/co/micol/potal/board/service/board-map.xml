@@ -3,21 +3,25 @@
 <mapper namespace="co.micol.potal.board.service.BoardMapper">
 
    <select id="boardSelectList" resultType="co.micol.potal.board.service.BoardVO">
-	 	SELECT    CM.COT_ID
-	      ,   CM.CONTENT_ID
-	      ,   CM.TITLE
-	      ,   DM.FIRST_IMAGE AS IMG_ID
-	      ,   DATE_FORMAT(FI.EVENT_START_DATE, '%Y-%m-%d') AS EVENT_START_DATE 
-	      ,   DATE_FORMAT(FI.EVENT_END_DATE, '%Y-%m-%d') AS EVENT_END_DATE 
-		  ,   CM.READ_COUNT
- 		FROM CONTENT_MASTER CM 
-		INNER JOIN DATABASE_MASTER DM
-		ON    CM.COT_ID = DM.COT_ID
-		INNER JOIN FESTIVAL_INTRO FI
-		ON    DM.COT_ID = FI.COT_ID
-		ORDER BY CONTENT_ID  ASC 
-		LIMIT 10
-		; 
+ 	SELECT    CM.COT_ID
+      ,   CM.CONTENT_ID
+      ,   CM.TITLE
+      ,   DM.FIRST_IMAGE AS IMG_ID
+      ,   DATE_FORMAT(FI.EVENT_START_DATE, '%Y-%m-%d') AS EVENT_START_DATE 
+      ,   DATE_FORMAT(FI.EVENT_END_DATE, '%Y-%m-%d') AS EVENT_END_DATE 
+	  ,   CM.READ_COUNT
+	  ,	  GROUP_CONCAT(T.TAG_NAME separator '|') AS TAGS
+		FROM CONTENT_MASTER CM 
+	INNER JOIN DATABASE_MASTER DM
+	ON    CM.COT_ID = DM.COT_ID
+	INNER JOIN FESTIVAL_INTRO FI
+	ON    DM.COT_ID = FI.COT_ID
+	INNER JOIN CONTENT_TAGS CT on CM.COT_ID = CT.COT_ID
+	INNER JOIN TAGS T ON CT.TAG_ID = T.TAG_ID
+	GROUP BY CM.COT_ID
+	ORDER BY CONTENT_ID  ASC 
+	LIMIT 10
+	; 
  	</select>
  
 
@@ -25,32 +29,31 @@
    
    <select id="boardSelect" resultType="co.micol.potal.board.service.BoardVO">   
    <!--   원하는 글 1개만 가져온다. -->
-	 	SELECT    CM.*
-	      ,   	DM.FIRST_IMAGE AS IMG_ID
-	      ,		DM.HOMEPAGE  AS HOMEPAGE
-	      ,   	DATE_FORMAT(FI.EVENT_START_DATE, '%Y-%m-%d') AS EVENT_START_DATE 
-	      ,  	DATE_FORMAT(FI.EVENT_END_DATE, '%Y-%m-%d') AS EVENT_END_DATE 
-		  ,   	CM.READ_COUNT
-		  ,		DM.OVER_VIEW AS OVIEW
-		  ,		DM.ADDR1 AS ADDR
- 		FROM CONTENT_MASTER CM  
-      	INNER JOIN DATABASE_MASTER DM
-		ON    CM.COT_ID = DM.COT_ID
-		INNER JOIN FESTIVAL_INTRO FI
-		ON    DM.COT_ID = FI.COT_ID
-		WHERE CONTENT_ID = ${content_id}  
-		ORDER BY CONTENT_ID  ASC ;
+ 	SELECT    CM.*
+      ,   	DM.FIRST_IMAGE AS IMG_ID
+      ,		DM.HOMEPAGE  AS HOMEPAGE
+      ,   	DATE_FORMAT(FI.EVENT_START_DATE, '%Y-%m-%d') AS EVENT_START_DATE 
+      ,  	DATE_FORMAT(FI.EVENT_END_DATE, '%Y-%m-%d') AS EVENT_END_DATE 
+	  ,   	CM.READ_COUNT
+	  ,		DM.OVER_VIEW AS OVIEW
+	  ,		DM.ADDR1 AS ADDR
+		FROM CONTENT_MASTER CM  
+     	INNER JOIN DATABASE_MASTER DM
+	ON    CM.COT_ID = DM.COT_ID
+	INNER JOIN FESTIVAL_INTRO FI
+	ON    DM.COT_ID = FI.COT_ID
+	WHERE CONTENT_ID = ${content_id}  
+	ORDER BY CONTENT_ID  ASC ;
    </select>
    
    	<select id="boardTagList" resultType="co.micol.potal.board.service.BoardVO">
-		SELECT
-			t.TAG_NAME 
-		FROM CONTENT_MASTER CM
-		INNER JOIN CONTENT_TAGS ct
-			ON ct.COT_ID = CM.COT_ID 
-		INNER JOIN TAGS t
-			ON t.TAG_ID = ct.TAG_ID 
-		WHERE CONTENT_ID = #{content_id};
+  	SELECT  
+    ,   T.TAG_NAME
+	FROM CONTENT_MASTER CM
+	INNER JOIN CONTENT_TAGS CT on CM.COT_ID = CT.COT_ID
+	INNER JOIN TAGS T ON CT.TAG_ID = T.TAG_ID
+	GROUP BY CM.COT_ID
+	LIMIT 0, 10;
 	</select>
    
    <!--  
